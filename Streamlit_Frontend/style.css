@@ -1,0 +1,18 @@
+/* Global CSS to hide Login page from sidebar when authenticated */
+
+/* Hide first navigation item (Login page) */
+[data-testid="stSidebarNav"] ul li:first-child,
+[data-testid="stSidebarNav"] ul li:nth-child(1),
+section[data-testid="stSidebar"] [data-testid="stSidebarNav"] ul li:first-child {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0px !important;
+    width: 0px !important;
+    padding: 0px !important;
+    margin: 0px !important;
+    overflow: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    position: absolute !important;
+    left: -9999px !important;
+}

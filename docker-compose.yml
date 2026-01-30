@@ -1,0 +1,59 @@
+version: "3.10"
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Streamlit_Frontend/Dockerfile
+    image: frontend:latest
+    ports:
+      - 8501:8501
+    networks:
+      - project_network
+    depends_on:
+      - backend
+    volumes:
+      - ./Streamlit_Frontend:/app/frontend
+    environment:
+      GOOGLE_CLIENT_ID: "1030030186501-j4316oldve68d3jmvgiqhb07jaobg1it.apps.googleusercontent.com"
+
+
+  backend:
+    build:
+      context: .
+      dockerfile: FastAPI_Backend/Dockerfile
+    image: backend:latest
+    ports:
+      - 8080:8080
+    networks:
+      - project_network
+    environment:
+      SEND_EMAIL_ENABLED: "true"
+      SEND_SMS_ENABLED: "false"
+      SMTP_SERVER: "smtp.gmail.com"
+      SMTP_PORT: "587"
+      SENDER_EMAIL: "dhatrithespaceworld@gmail.com"
+      SENDER_PASSWORD: "vzfo olim lxat frmc"
+      DEV_MODE: "false"
+      GOOGLE_CLIENT_ID: "1030030186501-j4316oldve68d3jmvgiqhb07jaobg1it.apps.googleusercontent.com"
+      GOOGLE_CLIENT_SECRET: "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"
+      OLLAMA_BASE_URL: "http://ollama:11434"
+      OLLAMA_MODEL: "tinyllama"
+    depends_on:
+      - ollama
+
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - 11434:11434
+    networks:
+      - project_network
+    volumes:
+      - ollama_data:/root/.ollama
+networks:
+  project_network:
+    driver: bridge
+
+volumes:
+  db_data:
+  ollama_data:

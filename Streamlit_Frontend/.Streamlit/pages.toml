@@ -1,0 +1,2 @@
+# Hide Login page from authenticated users
+# This requires Streamlit 1.28.0+
