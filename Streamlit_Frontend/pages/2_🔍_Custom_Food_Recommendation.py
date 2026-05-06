@@ -57,13 +57,24 @@ class Display:
     def __init__(self):
         self.nutrition_values=nutrition_values
 
+    def _normalize_recipes(self, recommendations):
+        if recommendations is None:
+            return []
+        if isinstance(recommendations, dict) and "output" in recommendations:
+            recommendations = recommendations.get("output")
+        if not isinstance(recommendations, list):
+            return []
+        recipes = [r for r in recommendations if isinstance(r, dict) and r.get("Name")]
+        return recipes
+
     def display_recommendation(self,recommendations):
         st.subheader('Recommended recipes:')
-        if recommendations!=None:
-            rows=len(recommendations)//5
+        recipes = self._normalize_recipes(recommendations)
+        if recipes:
+            rows=len(recipes)//5
             for column,row in zip(st.columns(5),range(5)):
                 with column:
-                    for recipe in recommendations[rows*row:rows*(row+1)]:                             
+                    for recipe in recipes[rows*row:rows*(row+1)]:                             
                         recipe_name=recipe['Name']
                         expander = st.expander(recipe_name)
                         recipe_link=recipe['image_link']
@@ -92,13 +103,14 @@ class Display:
         else:
             st.info('Couldn\'t find any recipes with the specified ingredients', icon="🙁")
     def display_overview(self,recommendations):
-        if recommendations!=None:
+        recipes = self._normalize_recipes(recommendations)
+        if recipes:
             st.subheader('Overview:')
             col1,col2,col3=st.columns(3)
             with col2:
-                selected_recipe_name=st.selectbox('Select a recipe',[recipe['Name'] for recipe in recommendations])
+                selected_recipe_name=st.selectbox('Select a recipe',[recipe['Name'] for recipe in recipes])
             st.markdown(f'<h5 style="text-align: center;font-family:sans-serif;">Nutritional Values:</h5>', unsafe_allow_html=True)
-            for recipe in recommendations:
+            for recipe in recipes:
                 if recipe['Name']==selected_recipe_name:
                     selected_recipe=recipe
             options = {
@@ -123,6 +135,8 @@ class Display:
     }
             st_echarts(options=options, height="600px",)
             st.caption('You can select/deselect an item (nutrition value) from the legend.')
+        else:
+            st.info('No overview available for the current recommendations.', icon="ℹ️")
 
 title="<h1 style='text-align: center;'>Custom Food Recommendation</h1>"
 st.markdown(title, unsafe_allow_html=True)
