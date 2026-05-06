@@ -1,6 +1,12 @@
 import streamlit as st
 import sys
-sys.path.append('..')
+from pathlib import Path
+
+base_dir = Path(__file__).resolve().parents[1]
+repo_root = base_dir.parent
+sys.path.append(str(base_dir))
+sys.path.append(str(repo_root))
+
 from auth_utils import login_user, register_user, send_otp, verify_otp, google_signin
 from form_constants import (
     GENDER_OPTIONS, ACTIVITY_LEVEL_OPTIONS, ACTIVITY_LEVEL_LABELS,
